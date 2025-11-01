@@ -59,7 +59,7 @@
 
       const repoOwner = "Ghost390746";  // Your GitHub username
       const repoName = "Strike-web";    // Your repository name
-      const workflowId = ".github/workflows/strike-generator.yml"; // Correct full path to the workflow file
+      const workflowId = "strike-generator.yml"; // The name of the workflow file (not full path)
 
       try {
         const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
@@ -70,21 +70,21 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            ref: "main",  // Use "master" if that's your default branch
+            ref: "main",  // Make sure you're triggering on the correct branch
             inputs: { framework, description }
           })
         });
 
         if (res.ok) {
-          status.textContent = "✅ Workflow triggered successfully! Check your GitHub Actions tab for the project artifact.";
+          status.textContent = "✅ Workflow triggered successfully!";
         } else {
           const errorData = await res.json();
           status.textContent = "❌ Failed to trigger workflow: " + errorData.message;
-          console.error("GitHub API error:", errorData);  // Debug info in the console
+          console.error("GitHub API error:", errorData);
         }
       } catch (err) {
         status.textContent = "❌ Error: " + err.message;
-        console.error("Fetch error:", err);  // Debug info in the console
+        console.error("Fetch error:", err);
       }
     });
   </script>
