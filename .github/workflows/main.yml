@@ -1,0 +1,41 @@
+name: Strike Project Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: 'Framework to generate'
+        required: true
+        default: Express
+      description:
+        description: 'Project description'
+        required: true
+        default: 'A sample project'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Strike Generator
+        run: node strike.js
+        env:
+          STRIKE_FRAMEWORK: ${{ github.event.inputs.framework }}
+          STRIKE_DESCRIPTION: ${{ github.event.inputs.description }}
+
+      - name: Upload project artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: strike-project
+          path: strike-project/
