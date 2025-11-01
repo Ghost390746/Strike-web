@@ -59,7 +59,7 @@
 
       const repoOwner = "Ghost390746";  // Your GitHub username
       const repoName = "Strike-web";    // Your repository name
-      const workflowId = "strike-generator.yml"; // The exact name of your workflow file
+      const workflowId = ".github/workflows/strike-generator.yml"; // Correct full path to the workflow file
 
       try {
         const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
