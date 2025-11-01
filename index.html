@@ -59,10 +59,11 @@
 
       const repoOwner = "Ghost390746";  // Your GitHub username
       const repoName = "Strike-web";    // Your repository name
-      const workflowId = "strike-generator.yml"; // The name of the workflow file (not full path)
+      const workflowId = ".github/workflows/strike-generator.yml"; // The name of the workflow file (not full path)
 
       try {
-        const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
+       const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/.github/workflows/strike-generator.yml/dispatches`, {
+
           method: "POST",
           headers: {
             "Accept": "application/vnd.github+json",
