@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Strike Project Generator</title>
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: 50px auto; padding: 20px; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    select, input, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
-    button { margin-top: 20px; padding: 12px 25px; font-size: 16px; cursor: pointer; border: none; background-color: #007bff; color: white; border-radius: 5px; }
-    button:disabled { background-color: #aaa; cursor: not-allowed; }
-    #status { margin-top: 20px; padding: 10px; border-radius: 5px; background-color: #f5f5f5; min-height: 30px; }
-    a.artifact-link { color: #007bff; text-decoration: none; }
-    a.artifact-link:hover { text-decoration: underline; }
+    body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    label { display: block; margin-top: 15px; }
+    select, input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #status { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -37,16 +34,10 @@
     </select>
 
     <label for="description">Project Description:</label>
-    <textarea id="description" name="description" rows="4" placeholder="Describe your project"></textarea>
+    <textarea id="description" name="description" rows="4" placeholder="A sample project"></textarea>
 
     <label for="token">GitHub Personal Access Token:</label>
     <input type="password" id="token" placeholder="ghp_xxx..." required>
-
-    <label for="repoOwner">GitHub Repository Owner:</label>
-    <input type="text" id="repoOwner" placeholder="e.g., yourusername" required>
-
-    <label for="repoName">GitHub Repository Name:</label>
-    <input type="text" id="repoName" placeholder="e.g., strike-web" required>
 
     <button type="submit">Generate Project</button>
   </form>
@@ -63,17 +54,12 @@
       const framework = document.getElementById("framework").value;
       const description = document.getElementById("description").value;
       const token = document.getElementById("token").value;
-      const repoOwner = document.getElementById("repoOwner").value;
-      const repoName = document.getElementById("repoName").value;
-      const workflowId = "strike-generator.yml"; // workflow filename in repo
-
-      if (!framework || !description || !token || !repoOwner || !repoName) {
-        status.textContent = "❌ Please fill in all required fields.";
-        return;
-      }
 
       status.textContent = "⏳ Triggering GitHub Actions workflow...";
-      form.querySelector("button").disabled = true;
+
+      const repoOwner = "Ghost390746";  // Your GitHub username
+      const repoName = "Strike-web";    // Your repository name
+      const workflowId = "strike-generator.yml"; // The exact name of your workflow file
 
       try {
         const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
@@ -84,21 +70,21 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            ref: "main",
+            ref: "main",  // Use "master" if that's your default branch
             inputs: { framework, description }
           })
         });
 
         if (res.ok) {
-          status.innerHTML = "✅ Workflow triggered successfully!<br>Check your GitHub Actions tab for the project artifact.";
+          status.textContent = "✅ Workflow triggered successfully! Check your GitHub Actions tab for the project artifact.";
         } else {
-          const err = await res.json();
-          status.textContent = "❌ Failed to trigger workflow: " + (err.message || res.statusText);
+          const errorData = await res.json();
+          status.textContent = "❌ Failed to trigger workflow: " + errorData.message;
+          console.error("GitHub API error:", errorData);  // Debug info in the console
         }
       } catch (err) {
         status.textContent = "❌ Error: " + err.message;
-      } finally {
-        form.querySelector("button").disabled = false;
+        console.error("Fetch error:", err);  // Debug info in the console
       }
     });
   </script>
